@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Team Task Manager</title>
+</head>
+<body>
+
+<h2>Login</h2>
+<input id="email" placeholder="Email"><br>
+<input id="password" placeholder="Password"><br>
+<button onclick="login()">Login</button>
+
+<h2>Create Project</h2>
+<input id="pname" placeholder="Project Name"><br>
+<input id="pdesc" placeholder="Description"><br>
+<button onclick="createProject()">Create Project</button>
+
+<h2>Create Task</h2>
+<input id="ttitle" placeholder="Task Title"><br>
+<input id="tdesc" placeholder="Description"><br>
+<input id="projectId" placeholder="Project ID"><br>
+<button onclick="createTask()">Create Task</button>
+
+<script>
+let token = "";
+
+async function login() {
+  const res = await fetch("http://localhost:5000/api/auth/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value
+    })
+  });
+
+  const data = await res.json();
+  token = data.token;
+  alert("Logged in!");
+}
+
+async function createProject() {
+  const res = await fetch("http://localhost:5000/api/projects", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token
+    },
+    body: JSON.stringify({
+      name: document.getElementById("pname").value,
+      description: document.getElementById("pdesc").value
+    })
+  });
+
+  const data = await res.json();
+  alert("Project Created: " + data._id);
+}
+
+async function createTask() {
+  const res = await fetch("http://localhost:5000/api/tasks", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": token
+    },
+    body: JSON.stringify({
+      title: document.getElementById("ttitle").value,
+      description: document.getElementById("tdesc").value,
+      project: document.getElementById("projectId").value,
+      status: "todo"
+    })
+  });
+
+  const data = await res.json();
+  alert("Task Created!");
+}
+</script>
+
+</body>
+</html>
